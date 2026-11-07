@@ -37,6 +37,12 @@
 <div id="damagedNotice" class="app-notice" role="alert" hidden></div>
 
 <div id="app">
+  <div id="layoutBar" class="plan-only" role="group" aria-label="Layouts">
+    <span class="bar-title">Layouts</span>
+    <div id="layoutChips"></div>
+    <button id="newLayout">+ Save layout</button>
+    <button id="allLayouts">All layouts</button>
+  </div>
   <main>
     <div class="canvas">
       <svg id="plan" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Floor plan"></svg>
@@ -61,12 +67,6 @@
         <button class="danger" id="sbRemove">Remove</button>
       </div>
     </section>
-    <div id="layoutBar" class="plan-only" role="group" aria-label="Layouts">
-      <span class="bar-title">Layouts</span>
-      <div id="layoutChips"></div>
-      <button id="newLayout">+ Save layout</button>
-      <button id="allLayouts">All layouts</button>
-    </div>
   </main>
 
   <aside id="inspector" aria-label="Inspector">
