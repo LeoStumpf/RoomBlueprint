@@ -1,0 +1,98 @@
+/* Compare page (compare.html) */
+.wrap { max-width: 1500px; margin: 0 auto; padding: 20px 16px 60px; }
+h1 { font-size: 28px; margin: 0 0 4px; }
+.panel { background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 14px 0 18px; }
+.controls label { display: flex; align-items: center; gap: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { padding: 4px 12px; }
+.chip.on { background: var(--text); border-color: var(--text); color: var(--bg); }
+.chip.on:hover:not(:disabled) { color: var(--bg); }
+.chip b { margin-right: 4px; }
+.grid { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 14px; }
+.col { background: var(--panel); border: 1px solid var(--line); padding: 12px; min-width: 0; }
+/* room for two lines, so that the plans start at the same height */
+.col h3 { font-size: 16px; line-height: 1.35; min-height: 2.7em; margin: 0; display: flex; gap: 6px; align-items: baseline; }
+.prio { color: var(--muted); font-weight: 700; font-family: var(--font-mono); }
+.move { margin-left: auto; display: flex; gap: 4px; }
+.move button { padding: 0 7px; }
+.plan { width: 100%; height: auto; max-height: 70vh; border: 1px solid var(--line); display: block; margin: 8px 0; }
+table.score { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.score td { padding: 2px 0; }
+table.score td:last-child { text-align: right; white-space: nowrap; }
+table.score tr.total td { border-top: 1px solid var(--line); padding-top: 5px; font: 600 15px var(--font-mono); }
+#texts { margin-top: 14px; }
+/* On screen the table of texts is the same grid as the plans. In print it is a table, see below. */
+#texts table, #texts tbody, #texts tr { display: contents; }
+#texts thead { display: none; }
+#texts .col { display: block; font-size: 14px; font-weight: normal; }
+ul { margin: 8px 0; padding-left: 18px; }
+li { margin: 3px 0; }
+.pro li::marker { content: "+  "; color: var(--good); font-weight: 700; }
+.con li::marker { content: "–  "; color: var(--bad); font-weight: 700; }
+.tip { padding: 2px 8px; }
+.tip ul, .own ul { margin: 2px 0 4px; }
+.own { margin-top: 6px; padding-top: 4px; border-top: 1px solid var(--line); }
+.own p { margin: 2px 0 0; }
+.notes { display: none; }
+.print-head { display: none; }
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .topbar .brand, .topbar .top-project { flex: 1 1 40%; min-height: 44px; }
+  .topbar .top-project { border-right: 0; }
+  .tabs { flex: 1 1 100%; border-top: 1px solid var(--line); }
+  .tabs a { flex: 1; justify-content: center; padding: 0 8px; }
+  .paper .tabs { overflow-x: auto; }
+}
+@media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+
+/* Print view (tab, ?print) and printing: A4 landscape, sheet 1 the plans, sheet 2 pros and cons.
+   Printing from the compare tab sets the same class in beforeprint.
+   Nothing may be cut: a sheet is at least one page and grows onto further pages when its text does not fit,
+   and the clone keeps the sheet's margins on every page, since @page has none. */
+@page { size: A4 landscape; margin: 0; }
+.paper .intro-cmp, .paper .move, .paper #reset { display: none !important; }
+.intro-paper { display: none; }
+.paper .intro-paper { display: block; }
+.paper .wrap { max-width: none; overflow-x: auto; }
+.paper .sheet { --bg: #fff; --panel: #fff; --text: #111; --muted: #555; --line: #bbb; --plan-bg: #fff;
+  width: 297mm; min-height: 210mm; overflow: visible; padding: 9mm; margin: 0 auto 10mm; background: #fff; color: var(--text);
+  box-shadow: 0 2px 14px var(--shadow); font: 8.5pt/1.35 "Liberation Sans", Arial, Helvetica, sans-serif; overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.paper .print-head { display: flex; justify-content: space-between; font-size: 9pt; margin-bottom: 2mm; }
+.paper .grid { grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 4mm; }
+.paper svg.plan { font-family: "Liberation Sans", Arial, Helvetica, sans-serif; }
+.paper .col { padding: 2.5mm; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.paper .col h3 { font-size: 10.5pt; break-after: avoid; }
+.paper .prio { flex: none; }
+/* With fewer than four columns the plan would otherwise push the scores off the sheet */
+.paper .plan { margin: 2mm 0; max-height: 128mm; }
+.paper table.score { font-size: 8pt; }
+.paper table.score tr, .paper li, .paper p, .paper .notes { break-inside: avoid; }
+.paper #texts { display: block; margin-top: 0; }
+/* The names of the layouts stand in the head of the table, which comes back on every page the texts run on to */
+.paper #texts table { display: table; width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 4mm 0; margin: 0 -4mm; width: calc(100% + 8mm); }
+.paper #texts thead { display: table-header-group; }
+.paper #texts tbody { display: table-row-group; }
+.paper #texts tr { display: table-row; }
+.paper #texts th { padding: 0 2.5mm 1mm; font-size: 9.5pt; text-align: left; vertical-align: bottom; overflow-wrap: anywhere; }
+.paper #texts .col { display: table-cell; vertical-align: top; }
+.paper #texts .col h3 { display: none; }
+.paper #texts .col { font-size: 7.5pt; line-height: 1.2; padding: 2mm 2.5mm; }
+.paper ul { margin: 1mm 0; padding-left: 4mm; }
+.paper li { margin: 0.2mm 0; }
+.paper .tip { padding: 0.5mm 1.5mm; }
+.paper .tip ul, .paper .own ul { margin: 0.5mm 0 1mm; }
+.paper .feng-read { font-size: 7pt; margin-top: 1.5mm; padding: 0.5mm 1.5mm; }
+.paper .feng-read ul { margin: 0.5mm 0 0; padding-left: 3mm; }
+.paper .own { font-size: 7pt; margin-top: 1.5mm; padding-top: 1mm; }
+.paper .own p { margin: 0.5mm 0 0; }
+.paper .notes { display: block; margin-top: 2mm; border-top: 1px solid var(--line); padding-top: 1mm; color: var(--muted); }
+.paper .notes i { display: block; height: 4.5mm; border-bottom: 1px dotted var(--line); }
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: #fff; }
+  .topbar, .controls, h1, .intro-paper { display: none !important; }
+  .wrap { padding: 0; overflow: visible !important; }
+  .paper .sheet { margin: 0; box-shadow: none; break-after: page; }
+}

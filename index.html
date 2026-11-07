@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-visual">
+<title>Room Blueprint</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/planner.css"></head>
+<body>
+<header class="topbar">
+  <h1 class="brand">Room Blueprint</h1>
+  <div class="top-project"><select id="projectSelect" aria-label="Project"></select></div>
+  <nav class="tabs" aria-label="Views"><a href="index.html" class="active" aria-current="page">Plan</a><a href="room-check.html">Room Check</a><a href="compare.html">Compare</a><a href="compare.html?print">Print</a></nav>
+  <div class="top-actions">
+    <button id="editRoom" aria-pressed="false">Edit room</button>
+    <button class="primary" id="exportJson">Export</button>
+    <details class="menu" id="moreMenu">
+      <summary>More ▾</summary>
+      <div class="menu-list">
+        <a class="phone-only" href="room-check.html">Room Check of all layouts</a>
+        <a class="phone-only" href="compare.html">Compare</a>
+        <a class="phone-only" href="compare.html?print">Print view</a>
+        <button id="newProject">New project</button>
+        <button id="renameProject">Rename project</button>
+        <button id="importJson">Import project</button>
+        <button id="restoreLocal" hidden>Restore local project</button>
+        <button id="exportPng">Save PNG</button>
+        <button id="printPlanBtn">Print plan / PDF</button>
+        <button id="openHelp">How to use</button>
+        <button class="danger" id="deleteProject">Delete project</button>
+      </div>
+    </details>
+  </div>
+</header>
+<div id="appNotice" class="app-notice" role="alert" hidden></div>
+<div id="damagedNotice" class="app-notice" role="alert" hidden></div>
+
+<div id="app">
+  <main>
+    <div class="canvas">
+      <svg id="plan" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Floor plan"></svg>
+      <div class="canvas-tools">
+        <button id="undoBtn" title="Undo (Ctrl+Z)" aria-label="Undo" disabled>↶</button>
+        <button id="redoBtn" title="Redo (Ctrl+Y)" aria-label="Redo" disabled>↷</button>
+      </div>
+      <div class="canvas-foot plan-only">
+        <button id="clearRoom" title="Move all furniture to the parking area, for a start from zero">Clear room</button>
+      </div>
+      <div id="roomInfo"></div>
+      <div id="zoom">
+        <button id="zoomIn" title="Zoom in" aria-label="Zoom in">+</button>
+        <button id="zoomOut" title="Zoom out" aria-label="Zoom out">−</button>
+        <button id="zoomFit" title="Fit to the screen" aria-label="Fit to the screen">⤢</button>
+      </div>
+    </div>
+    <section id="selBar" aria-label="Selected" hidden>
+      <div class="sb-head"><b id="sbName"></b><span class="mono" id="sbDim"></span></div>
+      <div class="sb-btns">
+        <button id="sbRotate">Rotate</button><button id="sbCopy">Copy</button><button id="sbSize">Size</button>
+        <button class="danger" id="sbRemove">Remove</button>
+      </div>
+    </section>
+    <div id="layoutBar" class="plan-only" role="group" aria-label="Layouts">
+      <span class="bar-title">Layouts</span>
+      <div id="layoutChips"></div>
+      <button id="newLayout">+ Save layout</button>
+      <button id="allLayouts">All layouts</button>
+    </div>
+  </main>
+
+  <aside id="inspector" aria-label="Inspector">
+    <section class="ins" id="roomPanel" hidden>
+      <h2>Room</h2>
+      <div class="row">
+        <label for="roomW">Width</label><input type="number" id="roomW" min="50" max="5000">
+        <label for="roomL">Length</label><input type="number" id="roomL" min="50" max="5000">
+        <label for="roomWall">Wall</label><input type="number" id="roomWall" min="0" max="200">
+      </div>
+      <label class="row" id="mainEntrance" hidden><span>Main entrance</span>
+        <select id="mainEntranceSelect" style="flex:1;min-width:0"></select></label>
+      <div class="btns">
+        <button data-add-opening="door">+ Door</button><button data-add-opening="balcony">+ Balcony door</button>
+        <button data-add-opening="window">+ Window</button>
+      </div>
+      <div class="btns">
+        <button data-add-fixture="radiator">+ Radiator</button><button data-add-fixture="niche">+ Niche</button>
+        <button data-add-fixture="column">+ Column</button><button data-add-fixture="block">+ Wall block</button>
+      </div>
+      <div class="btns" role="group" aria-labelledby="cutCornerLabel">
+        <span class="sub corner-label" id="cutCornerLabel">Cut a corner</span>
+        <button data-add-corner="tl" aria-label="Top left" title="A wall block in the top left corner, for an L or a cut corner">↖</button>
+        <button data-add-corner="tr" aria-label="Top right" title="A wall block in the top right corner, for an L or a cut corner">↗</button>
+        <button data-add-corner="bl" aria-label="Bottom left" title="A wall block in the bottom left corner, for an L or a cut corner">↙</button>
+        <button data-add-corner="br" aria-label="Bottom right" title="A wall block in the bottom right corner, for an L or a cut corner">↘</button>
+        <button data-add-shape="U" title="A wall block in the middle of a wall">U shape</button>
+      </div>
+      <h3 id="roomPartsTitle">In the room</h3>
+      <ul class="items" id="roomParts" aria-labelledby="roomPartsTitle"></ul>
+      <h3>Selected</h3>
+      <div id="roomSelPanel"></div>
+      <p class="room-warn" id="roomProblems" hidden></p>
+      <div class="help">Drag the round handles to move any wall or resize a fixture, doors and windows along the walls, fixtures anywhere.
+        <kbd>Shift</kbd> = no snapping. Arrow keys = 1 cm (<kbd>Shift</kbd> 10 cm), <kbd>Del</kbd> = remove,
+        <kbd>Esc</kbd> = deselect, then leave.</div>
+    </section>
+
+    <section class="ins plan-only" id="selSection">
+      <h2>Selected</h2>
+      <div id="selPanel"></div>
+    </section>
+
+    <section class="ins" id="checks">
+      <h2>Checks</h2>
+      <div id="roomNotice" role="status" hidden></div>
+      <div id="roomCheck"></div>
+      <div id="status" role="status"></div>
+      <label class="switch" title="Zones, daylight, ways and the view of the doors"><input type="checkbox" id="overlayToggle"> Show on the plan</label>
+      <label class="switch" title="Chi, yin and yang, commanding position"><input type="checkbox" id="fengToggle"> Feng Shui layer</label>
+    </section>
+
+    <section class="ins plan-only" id="schedule">
+      <div class="ins-head"><h2>Schedule</h2><button id="openCatalog">+ Add item</button></div>
+      <ul class="items" id="itemList"></ul>
+    </section>
+  </aside>
+</div>
+
+<nav id="bottomNav" aria-label="Planner">
+  <button id="navPlan" aria-current="true">Plan</button>
+  <button id="navAdd">Add</button>
+  <button id="navLayouts">Layouts</button>
+  <button id="navCheck" aria-expanded="false" aria-controls="inspector">Check</button>
+</nav>
+
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+
+<dialog id="layoutsDialog" aria-labelledby="layoutsTitle">
+  <h2 id="layoutsTitle">Layouts</h2>
+  <div class="row">
+    <input type="text" id="layoutName" placeholder="Layout name" aria-label="Layout name" maxlength="200">
+    <button class="primary" id="saveLayout">Save</button>
+  </div>
+  <ul class="variants" id="layoutList"></ul>
+  <div class="help" id="layoutIdea"></div>
+  <div class="btns"><a href="room-check.html" class="sub dialog-link">Room Check of all layouts →</a></div>
+  <div class="btns"><button id="layoutsClose">Close</button></div>
+</dialog>
+
+<dialog id="helpDialog" aria-labelledby="helpTitle">
+  <h2 id="helpTitle">How to use</h2>
+  <div class="help">
+    Drag furniture · double click or <kbd>R</kbd> = turn 90° · <kbd>Q</kbd>/<kbd>E</kbd> = ±15° ·
+    drag the round handle = turn freely · arrow keys = 1 cm (<kbd>Shift</kbd> 10 cm) ·
+    <kbd>Shift</kbd> while dragging = no snapping · <kbd>Ctrl</kbd>+click = group with the selected piece ·
+    <kbd>D</kbd> = duplicate · <kbd>Del</kbd> = set aside · <kbd>Ctrl</kbd>+<kbd>Z</kbd>/<kbd>Y</kbd> = undo/redo ·
+    <kbd>Esc</kbd> = deselect · drag the background = pan, mouse wheel = zoom.
+    Every key has a button in the Selected panel, and the Schedule selects a piece without the mouse.
+  </div>
+  <p class="help" style="margin-top:8px">Furniture set aside waits in the parking area next to the room and is not checked.
+    A cross and a solid red frame = runs into something, an exclamation mark and a dashed orange frame = blocks a door.</p>
+  <div class="btns"><button id="helpClose">Close</button></div>
+</dialog>
+
+<dialog id="startDialog" aria-labelledby="startTitle">
+  <h2 id="startTitle">Start a room</h2>
+  <div class="row"><label for="startName">Name</label>
+    <input type="text" id="startName" maxlength="200" placeholder="Name of the template"></div>
+  <h3 id="startLibraryTitle">Start from a room of the library</h3>
+  <div id="startGroups" role="group" aria-labelledby="startLibraryTitle"></div>
+  <div id="startTemplates"></div>
+  <p class="sub start-note">Each room opens with an example layout. “Clear room” on the plan sets all furniture aside.</p>
+  <h3>Or an empty room</h3>
+  <div class="row">
+    <label for="startW">Width</label><input type="number" id="startW" value="400" min="50" max="5000">
+    <label for="startL">Length</label><input type="number" id="startL" value="500" min="50" max="5000">
+    <label for="startWall">Wall</label><input type="number" id="startWall" value="20" min="0" max="200">
+    <button type="button" class="primary" id="startEmpty">Create</button>
+  </div>
+  <p class="room-warn" id="startError" role="alert"></p>
+  <div class="btns">
+    <button type="button" id="startImport">Import a project file</button>
+    <button type="button" id="startCancel">Cancel</button>
+  </div>
+</dialog>
+
+<dialog id="catalogDialog" aria-labelledby="catalogTitle">
+  <h2 id="catalogTitle">Add furniture</h2>
+  <div class="row"><input type="search" id="catalogSearch" placeholder="Search: sofa, couch 200, 200x90 …" aria-label="Search the catalog by name or size"></div>
+  <div id="catalogList"></div>
+  <details id="customBox">
+    <summary>Your own piece</summary>
+    <p class="sub" id="customFrom">Name, size, shape and type. ✎ next to a piece starts from it.</p>
+    <div class="row"><input type="text" id="newName" placeholder="Name" aria-label="Name" maxlength="200" style="flex:1;min-width:0"></div>
+    <div class="row">
+      <label for="newW">W</label><input type="number" id="newW" min="1" max="2000" style="width:70px">
+      <label for="newD">D</label><input type="number" id="newD" min="1" max="2000" style="width:70px">
+      <label for="newH">H</label><input type="number" id="newH" min="1" max="5000" style="width:70px" title="Optional">
+      <span class="sub">cm</span>
+    </div>
+    <div class="row">
+      <span class="pair"><label for="newKind">Type</label><select id="newKind"></select></span>
+      <span class="pair"><label for="newShape">Shape</label><select id="newShape"></select></span>
+    </div>
+    <p class="sub" id="newKindHint"></p>
+    <p class="room-warn" id="newError" role="alert"></p>
+    <div class="btns">
+      <label class="check"><input type="checkbox" id="newKeep">Also keep as a template</label>
+      <button id="customReset">Start empty</button>
+      <button class="primary" id="addItem">Add</button>
+    </div>
+  </details>
+  <div class="btns"><button id="catalogClose">Close</button></div>
+</dialog>
+
+<dialog id="moveDialog" aria-labelledby="moveText">
+  <form method="dialog">
+    <p id="moveText"></p>
+    <div class="row"><select id="moveTarget" aria-label="Project" style="flex:1;min-width:0"></select></div>
+    <div class="btns"><button value="cancel">Cancel</button><button class="primary" value="move">Move</button></div>
+  </form>
+</dialog>
+
+<section id="printSheet">
+  <svg id="printPlan" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="print-foot">
+    <table id="printList"></table>
+    <div class="title-block">
+      <div class="tname" id="printName"></div>
+      <div class="tmeta"><span id="printRoom"></span><span>Sizes in cm</span></div>
+      <div class="tmeta"><span id="printScaleText"></span><span id="printDate"></span></div>
+      <div><svg id="printScale" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    </div>
+  </div>
+  <p id="printCheck"></p>
+</section>
+
+<script src="demo/rooms.js"></script>
+<script src="js/platform.js"></script>
+<script src="js/geometry.js"></script>
+<script src="js/analyze.js"></script>
+<script src="js/project.js"></script>
+<script src="js/recommend.js"></script>
+<script src="js/workspace.js"></script>
+<script src="js/render.js"></script>
+<script src="js/dialogs.js"></script>
+<script src="js/print.js"></script>
+<script src="js/room-edit.js"></script>
+<script src="js/room-editor.js"></script>
+<script src="js/catalog.js"></script>
+<script src="js/item-edit.js"></script>
+<script src="js/furniture-panel.js"></script>
+<script src="js/start.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

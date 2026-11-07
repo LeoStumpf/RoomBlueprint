@@ -1,0 +1,20 @@
+# Projects stored by serve.py
+data/
+
+# Optional local project folder, a folder or a link to one (no trailing slash, so a link is covered too)
+/local
+
+# Local tool settings
+.claude/
+
+# Python and Node leftovers
+__pycache__/
+*.pyc
+node_modules/
+
+# Editors and operating systems
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

@@ -1,0 +1,117 @@
+/* Shared by all pages: the Blueprint tokens, reset, top bar, controls, percentage bars, tip box. */
+/* The plan is drawn with the --plan tokens, so it follows the theme. Paper is always light, whatever the screen shows. */
+:root, .paper .sheet {
+  color-scheme: light;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --bg: #f7f6f1; --panel: #fdfcf9; --text: #16202e; --muted: #55606e; --line: #c9cdd2; --track: #dddfe2;
+  --accent: #1f4fd8; --on-accent: #ffffff; --accent-soft: #e4ebfb;
+  --red: #b3261e; --orange: #a65300; --ok: #2e7d46; --good: #2e7d46; --bad: #b3261e;
+  --input: transparent; --shadow: #16202e33;
+  --zone-rest: #5b4bc4; --zone-live: #b4532e; --zone-work: #2e7d46;
+  --plan-bg: #f7f6f1; --plan-floor: #ffffff; --plan-grid: #e7e9ec; --plan-grid-major: #d5d9de;
+  --plan-wall: #16202e; --plan-on-wall: #ffffff; --plan-fixture: #c9cdd2; --plan-door: #55606e;
+  --plan-glass: #8fb0ff; --plan-glass-soft: #dbe5ff; --plan-on-glass: #16202e;
+  --plan-ink: #16202e; --plan-muted: #55606e; --plan-item: #ffffff; --plan-line: #16202e; --plan-halo: #ffffff;
+  --plan-accent: #1f4fd8; --plan-bad: #b3261e; --plan-warn: #a65300; --plan-flow: #0b7a6e; --plan-sun: #ffc83c;
+  --plan-image: #6a3fc8; --plan-device: #2b3440; --plan-lens: #8fb0ff;
+  --plan-zone-rest: #5b4bc4; --plan-zone-live: #b4532e; --plan-zone-work: #2e7d46;
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0f1a2e; --panel: #13223b; --text: #e6ecf5; --muted: #a3b1c6; --line: #31415e; --track: #31415e;
+    --accent: #8fb0ff; --on-accent: #0f1a2e; --accent-soft: #1d3157;
+    --red: #ff9c8f; --orange: #f2b05e; --ok: #7fd49b; --good: #7fd49b; --bad: #ff9c8f;
+    --shadow: #00000080;
+    --zone-rest: #b1a7f5; --zone-live: #f0a27f; --zone-work: #7fd49b;
+    --plan-bg: #0f1a2e; --plan-floor: #13223b; --plan-grid: #22334f; --plan-grid-major: #2d4263;
+    --plan-wall: #e6ecf5; --plan-on-wall: #0f1a2e; --plan-fixture: #41557a; --plan-door: #a3b1c6;
+    --plan-glass: #8fb0ff; --plan-glass-soft: #2a4372; --plan-on-glass: #e6ecf5;
+    --plan-ink: #e6ecf5; --plan-muted: #a3b1c6; --plan-item: #13223b; --plan-line: #e6ecf5; --plan-halo: #13223b;
+    --plan-accent: #8fb0ff; --plan-bad: #ff9c8f; --plan-warn: #f2b05e; --plan-flow: #6fd8c7; --plan-sun: #8f7a35;
+    --plan-image: #b9a5ff; --plan-device: #a3b1c6; --plan-lens: #13223b;
+    --plan-zone-rest: #b1a7f5; --plan-zone-live: #f0a27f; --plan-zone-work: #7fd49b;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font: 14px/1.45 var(--font-sans); }
+a { color: var(--accent); }
+h1, h2, h3 { font-weight: 600; }
+.sub { color: var(--muted); }
+.mono { font-family: var(--font-mono); }
+.kicker { font: 12px/1.4 var(--font-mono); letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+
+/* Top bar */
+.topbar { display: flex; flex-wrap: wrap; align-items: stretch; flex: none; border-bottom: 1.5px solid var(--text); background: var(--bg); }
+.brand { display: flex; align-items: center; margin: 0; padding: 0 20px; min-height: 48px; border-right: 1.5px solid var(--text); color: inherit;
+  font: 600 15px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+.top-project { display: flex; align-items: center; padding: 0 12px 0 20px; border-right: 1px solid var(--line);
+  font-family: var(--font-mono); min-width: 0; max-width: 34ch; }
+.top-project span, .top-project select { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-project select { width: 100%; border: 0; background: transparent; font: inherit; color: inherit; padding: 6px 0; cursor: pointer; }
+.top-project select option { background: var(--panel); color: var(--text); }
+.tabs { display: flex; flex: 1; min-width: 0; overflow-x: auto; }
+.tabs a { display: flex; align-items: center; padding: 0 18px; min-height: 48px; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.tabs a:hover { color: var(--text); }
+.tabs a.active { color: var(--text); font-weight: 600; box-shadow: inset 0 -3px 0 var(--accent); }
+.top-actions { display: flex; gap: 8px; align-items: center; padding: 6px 16px; }
+
+/* Controls */
+button, select { font: inherit; color: var(--text); }
+button { background: transparent; border: 1px solid var(--text); border-radius: 0; padding: 4px 10px; min-height: 30px; cursor: pointer; }
+button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+button.primary:hover:not(:disabled) { color: var(--on-accent); filter: brightness(1.1); }
+button.danger { color: var(--red); border-color: var(--red); }
+button.danger:hover:not(:disabled) { color: var(--red); border-color: var(--red); background: color-mix(in srgb, var(--red) 10%, transparent); }
+input[type=text], input[type=number], input[type=search], select { font: inherit; color: var(--text); background: var(--input);
+  border: 1px solid var(--text); border-radius: 0; padding: 5px 6px; min-width: 0; }
+input[type=text], input[type=number], input[type=search] { width: 100%; }
+input[type=number] { font-family: var(--font-mono); }
+select option { background: var(--panel); color: var(--text); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Touch: everything that can be pressed is at least 44 px */
+@media (pointer: coarse), (max-width: 760px) {
+  button, select, summary, .tabs a, input[type=text], input[type=number], input[type=search] { min-height: 44px; }
+  button { min-width: 44px; }
+  input[type=checkbox] { width: 24px; height: 24px; }
+  input[type=color] { min-height: 44px; min-width: 44px; }
+  label:has(> input[type=checkbox]) { min-height: 44px; }
+}
+
+/* Percentage bars: one per criterion with its reason (barsHtml), or short in a table cell (pctBar) */
+.pct-bar { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; font-family: var(--font-mono); white-space: nowrap; }
+.pct-bar .bar-track { width: 56px; margin: 0; }
+/* Room for “100 %”, so that the bars of a column line up */
+.pct-bar .n { min-width: 5ch; text-align: right; }
+.pct-bar.na { color: var(--muted); }
+.bar-row { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.bar-head { display: flex; justify-content: space-between; gap: 12px; font-weight: 600; }
+.bar-head .pct { font-family: var(--font-mono); white-space: nowrap; }
+.bar-track { height: 6px; margin: 6px 0 5px; background: var(--track); }
+.bar-track i { display: block; height: 100%; background: var(--accent); }
+.bar-why { color: var(--muted); font-size: 13px; }
+
+.tip { border-left: 3px solid var(--accent); margin-top: 8px; }
+/* What belongs to the Feng Shui layer is there only while that switch is on */
+html:not(.feng) .feng-only { display: none; }
+.feng-read { margin-top: 8px; padding: 2px 8px; border-left: 3px solid var(--zone-rest); font-size: 13px; }
+.feng-read ul { margin: 2px 0 4px; padding-left: 16px; }
+.feng-read li { margin: 2px 0; }
+.feng-read li.good::marker { content: "+  "; color: var(--good); font-weight: 700; }
+.feng-read li.bad::marker { content: "–  "; color: var(--bad); font-weight: 700; }
+/* Read-only plans on the analysis and compare pages */
+svg.plan, svg.plan * { cursor: default; user-select: none; }
+svg.plan { background: var(--plan-bg); }
+
+/* Problems with saving or sharing */
+.app-notice { padding: 8px 16px; font-size: 13px; line-height: 1.4; color: var(--orange); border-bottom: 1.5px solid var(--orange); }
+.app-notice[hidden] { display: none; }
+.app-notice p, .app-notice ul { margin: 0; padding: 0; list-style: none; }
+.app-notice li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; overflow-wrap: anywhere; }
+@media print { .app-notice { display: none; } }

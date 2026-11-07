@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Room Check · Room Blueprint</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/analysis.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">Room Blueprint</a>
+  <div class="top-project" id="topProject"><span id="projectName"></span></div>
+  <nav class="tabs" aria-label="Views"><a href="index.html">Plan</a><a href="room-check.html" class="active" aria-current="page">Room Check</a><a href="compare.html">Compare</a><a href="compare.html?print">Print</a></nav>
+</header>
+<div id="appNotice" class="app-notice" role="alert" hidden></div>
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <div class="kicker">All layouts, scored from the plan</div>
+      <h1>Room Check</h1>
+    </div>
+    <div class="switches">
+      <label><input type="checkbox" id="overlayToggle" checked> Show on the plans</label>
+      <label><input type="checkbox" id="fengToggle"> Show Feng Shui layer</label>
+    </div>
+  </div>
+  <div id="cards"></div>
+  <div class="btns-row"><button id="openAll">Open all</button><button id="closeAll">Close all</button></div>
+
+  <h2>Overview</h2>
+  <div class="panel weights">
+    <b>What matters to you?</b> <span class="sub">The weights decide the score and the order.
+      Click a column heading to sort by that criterion.</span>
+    <div class="wgrid" id="weights"></div>
+  </div>
+  <div class="scroll"><table id="summary"></table></div>
+
+  <h2>What matters</h2>
+  <div class="principles">
+    <div class="panel"><b>Ways</b>People come in at the entrance and cross to the window or balcony door. A clear way of
+      about 90 cm and a piece of open floor make a room easier to use and let it feel larger.</div>
+    <div class="panel"><b>Doors</b>Every door should open all the way, and from the bed and the desk you want to see who
+      comes in. A bed straight in line with a door gets the draught and the view from outside.</div>
+    <div class="panel"><b>Daylight</b>At a desk, daylight from the side is ideal. Looking straight at a window dazzles,
+      and with the window behind you it reflects in the screen.</div>
+    <div class="panel"><b>Zones</b>Sleep in the darker, quieter part of the room, work and live in the bright part near the
+      windows. Where one piece of furniture does both jobs, the zones mix.</div>
+    <div class="panel"><b>Screens</b>A TV or a projected picture needs a clear view from the seats: nothing tall in front of
+      it, whether furniture, a column or a wall block.</div>
+  </div>
+  <div class="feng-only">
+    <h2>Feng Shui</h2>
+    <p class="sub">An optional way of reading the same plan. It adds its own terms and never changes a score.</p>
+    <div class="principles">
+      <div class="panel"><b>Commanding position</b>Bed and desk stand with a solid wall behind them and the door in sight,
+        but not straight in its line. Seeing the door is said to help you rest and concentrate.</div>
+      <div class="panel"><b>Chi</b>Energy enters at the door and moves through the room. A free, gently curving way and an
+        open centre let it spread, while a straight line from the door rushes at whatever stands there.</div>
+      <div class="panel"><b>Yin and yang</b>The quiet, darker part of the room is yin and suits rest. The bright, active part
+        is yang and suits work and living. A place that does both mixes them.</div>
+    </div>
+  </div>
+
+</main>
+
+<script src="demo/rooms.js"></script>
+<script src="js/platform.js"></script>
+<script src="js/geometry.js"></script>
+<script src="js/analyze.js"></script>
+<script src="js/project.js"></script>
+<script src="js/recommend.js"></script>
+<script src="js/workspace.js"></script>
+<script src="js/render.js"></script>
+<script src="js/analysis-page.js"></script>
+</body>
+</html>

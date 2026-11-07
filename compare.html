@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compare · Room Blueprint</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/compare.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">Room Blueprint</a>
+  <div class="top-project" id="topProject"><span id="projectName"></span></div>
+  <nav class="tabs" aria-label="Views"><a href="index.html">Plan</a><a href="room-check.html">Room Check</a><a href="compare.html" id="tabCmp">Compare</a><a href="compare.html?print" id="tabPaper">Print</a></nav>
+</header>
+<main class="wrap">
+  <h1 id="title">Compare</h1>
+  <p class="sub intro-cmp">Up to four layouts side by side, in your order. The order you pick them in is their priority, and
+    ◀ ▶ change it. The Print tab shows how it prints.</p>
+  <p class="sub intro-paper">This is how it prints: A4 landscape, first the plans with their scores, then pros and cons with
+    room for notes. Long texts run on to further pages, so nothing is cut. Pick the layouts and their order here or in the Compare tab.</p>
+  <div class="controls">
+    <div class="chips" id="chips"></div>
+    <label style="cursor:pointer"><input type="checkbox" id="overlayToggle"> Show on the plans</label>
+    <label style="cursor:pointer"><input type="checkbox" id="fengToggle"> Feng Shui layer</label>
+    <button id="reset">Standard</button>
+    <button class="primary" id="print">Print</button>
+  </div>
+  <section class="sheet">
+    <div class="print-head"><b>Room: layouts compared</b><span class="date"></span></div>
+    <div class="grid" id="plans"></div>
+  </section>
+  <section class="sheet">
+    <div class="print-head"><b>Pros and cons</b><span class="date"></span></div>
+    <div class="grid" id="texts"></div>
+  </section>
+</main>
+
+<script src="demo/rooms.js"></script>
+<script src="js/platform.js"></script>
+<script src="js/geometry.js"></script>
+<script src="js/analyze.js"></script>
+<script src="js/project.js"></script>
+<script src="js/recommend.js"></script>
+<script src="js/workspace.js"></script>
+<script src="js/render.js"></script>
+<script src="js/compare-page.js"></script>
+</body>
+</html>
